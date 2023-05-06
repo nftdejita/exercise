@@ -5,13 +5,15 @@ const Main = ({ contract, account, updateLog, web3 }) => {
 
   const donate = async () => {
     try {
-      const result = await contract.methods.donate().send({
-        from: account,
-        value: web3.utils.toWei(donationAmount, "ether")
-      });
-      updateLog(`Donated ${donationAmount} Ether: ${result.transactionHash}`);
+      const amount = web3.utils.toWei("0.1", "ether");
+      await contract.methods.donate().send({ from: account, value: amount });
+      updateLog(`Donated ${web3.utils.fromWei(amount, "ether")} ether.`);
     } catch (error) {
-      updateLog(`Error: ${error.message}`);
+      if (error.message.includes("Sorry, minimum amount is 0.1 ether")) {
+        updateLog("Error: Sorry, minimum amount is 0.1 ether");
+      } else {
+        updateLog(`Error: ${error.message}`);
+      }
     }
   };
 
@@ -27,17 +29,22 @@ const Main = ({ contract, account, updateLog, web3 }) => {
   };
 
   return (
-    <div>
-      <h2>{contract.options.address}</h2>
-      <input
-        type="number"
-        value={donationAmount}
-        onChange={(e) => setDonationAmount(e.target.value)}
-        min="0.1"
-        step="0.1"
-      />
-      <button onClick={donate}>Donate</button>
-      <button onClick={withdraw}>Withdraw</button>
+    <div className="main">
+      <div className="contract-info">
+        <h1>Charity</h1>
+        <h2>{contract.options.address}</h2>
+      </div>
+      <div className="form-control">
+        <input
+          type="number"
+          value={donationAmount}
+          onChange={(e) => setDonationAmount(e.target.value)}
+          min="0.1"
+          step="0.1"
+        />
+        <button onClick={donate}>Donate</button>
+        <button onClick={withdraw}>Withdraw</button>
+      </div>
     </div>
   );
 };
