@@ -38,7 +38,7 @@ const App = () => {
         const web3Instance = new Web3(window.ethereum);
         setWeb3(() => web3Instance);
         const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts"
+          method: "eth_requestAccounts",
         });
         setAccount(() => accounts[0]);
         getBalance(accounts[0]);
@@ -75,7 +75,7 @@ const App = () => {
         ethereum.removeListener("chainChanged", () => window.location.reload());
       }
     };
-  }, [getBalance, web3]);
+  }, []);
 
   const updateLog = (newLog) => {
     setLogs((prevLogs) => [...prevLogs, newLog]);
@@ -86,7 +86,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div className="container">
       <Header account={account} balance={balance} />
       <Main
         contract={contract}
