@@ -46,8 +46,15 @@ const App = () => {
           CharityContract.abi,
           "0xCAd10907975a9314B07d9719023B654B2b1612F0"
         );
-
         setContract(contractInstance);
+
+        // イベント登録
+        const donateSubscription = contractInstance.events.Donate(
+          {},
+          (err, event) => {
+            updateLog(event);
+          }
+        );
       } else {
         alert("Please install MetaMask.");
       }
@@ -73,6 +80,7 @@ const App = () => {
       if (ethereum) {
         ethereum.removeListener("accountsChanged", setAccount);
         ethereum.removeListener("chainChanged", () => window.location.reload());
+        donateSubscription.unsubscribe();
       }
     };
   }, []);
