@@ -5,9 +5,10 @@ const Main = ({ contract, account, updateLog, web3 }) => {
 
   const donate = async () => {
     try {
-      const amount = web3.utils.toWei("0.1", "ether");
+      const amount = web3.utils.toWei(donationAmount, "ether");
       await contract.methods.donate().send({ from: account, value: amount });
       updateLog(`Donated ${web3.utils.fromWei(amount, "ether")} ether.`);
+      setDonationAmount(() => 0);
     } catch (error) {
       if (error.message.includes("Sorry, minimum amount is 0.1 ether")) {
         updateLog("Error: Sorry, minimum amount is 0.1 ether");

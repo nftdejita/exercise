@@ -1,14 +1,22 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 
 const LogArea = ({ logs }) => {
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [logs]);
+
   return (
     <div className="log-area">
-      <h3>Logs</h3>
-      <ul className="log">
-        {logs.map((log, index) => (
-          <li key={index}>{log}</li>
-        ))}
-      </ul>
+      {logs.map((log, index) => (
+        <div key={index}>{log}</div>
+      ))}
+      <div ref={messagesEndRef} />
     </div>
   );
 };
