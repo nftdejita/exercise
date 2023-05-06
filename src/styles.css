@@ -19,22 +19,17 @@ body {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  background-color: #3f51b5;
+  background-color: darkblue;
   color: #fff;
-  padding: 15px;
+  padding: 0 15px 0;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
-}
-
-.account-info {
-  display: flex;
-  flex-direction: column;
 }
 
 .main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 30px;
+  margin-top: 10px;
   margin-bottom: 30px;
   width: 100%;
 }
@@ -43,7 +38,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .form-control {

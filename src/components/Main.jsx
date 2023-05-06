@@ -32,7 +32,7 @@ const Main = ({ contract, account, updateLog, web3 }) => {
     <div className="main">
       <div className="contract-info">
         <h1>Charity</h1>
-        <h2>{contract.options.address}</h2>
+        <p>{contract.options.address}</p>
       </div>
       <div className="form-control">
         <input
