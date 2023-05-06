@@ -32,6 +32,8 @@ const App = () => {
   }, [account, getBalance]);
 
   useEffect(() => {
+    let donateSubscription;
+
     // Initialize web3, account and contract
     const init = async () => {
       if (window.ethereum) {
@@ -49,10 +51,10 @@ const App = () => {
         setContract(contractInstance);
 
         // イベント登録
-        const donateSubscription = contractInstance.events.Donate(
+        donateSubscription = contractInstance.events.Donate(
           {},
           (err, event) => {
-            updateLog(event);
+            updateLog(web3.utils.fromWei(event.returnValues.value));
           }
         );
       } else {
@@ -80,6 +82,8 @@ const App = () => {
       if (ethereum) {
         ethereum.removeListener("accountsChanged", setAccount);
         ethereum.removeListener("chainChanged", () => window.location.reload());
+      }
+      if (donateSubscription) {
         donateSubscription.unsubscribe();
       }
     };
