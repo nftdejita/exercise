@@ -1,20 +1,15 @@
 import React, { useState } from "react";
 
-const Main = ({ contract, account, updateLog, web3 }) => {
-  const [donationAmount, setDonationAmount] = useState("");
+const Main = ({ contract, account, updateLog, web3, donation }) => {
+  const [donationAmount, setDonationAmount] = useState("0.2");
 
   const donate = async () => {
     try {
       const amount = web3.utils.toWei(donationAmount, "ether");
       await contract.methods.donate().send({ from: account, value: amount });
       updateLog(`Donated ${web3.utils.fromWei(amount, "ether")} ether.`);
-      setDonationAmount(() => 0);
     } catch (error) {
-      if (error.message.includes("Sorry, minimum amount is 0.1 ether")) {
-        updateLog("Error: Sorry, minimum amount is 0.1 ether");
-      } else {
-        updateLog(`Error: ${error.message}`);
-      }
+      updateLog(`Error: ${error.message}`);
     }
   };
 
@@ -31,11 +26,8 @@ const Main = ({ contract, account, updateLog, web3 }) => {
 
   return (
     <div className="main">
-      <div className="contract-info">
-        <h1>Charity</h1>
-        <p>{contract.options.address}</p>
-      </div>
-      <div className="form-control">
+      <h2>Charity ({donation} ETH)</h2>
+      <div>
         <input
           type="number"
           value={donationAmount}
@@ -43,9 +35,9 @@ const Main = ({ contract, account, updateLog, web3 }) => {
           min="0.1"
           step="0.1"
         />
-        <button onClick={donate}>Donate</button>
-        <button onClick={withdraw}>Withdraw</button>
+        <button onClick={donate}>募金</button>
       </div>
+      <button onClick={withdraw}>引き出し</button>
     </div>
   );
 };

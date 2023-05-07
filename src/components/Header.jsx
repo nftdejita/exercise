@@ -3,8 +3,14 @@ import React from "react";
 const Header = ({ account, balance }) => {
   return (
     <div className="header">
-      <p>Account: {account}</p>
-      <p>Balance: {balance} Ether</p>
+      <div className="header-item">
+        <p>Account</p>
+        <p>Balance</p>
+      </div>
+      <div className="header-item">
+        <p>{account.slice(0, 10)}...</p>
+        <p>{balance.slice(0, 8)}</p>
+      </div>
     </div>
   );
 };
