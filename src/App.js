@@ -10,6 +10,7 @@ const App = () => {
   const [web3, setWeb3] = useState(null);
   const [account, setAccount] = useState("");
   const [balance, setBalance] = useState("");
+  const [donation, setDonation] = useState("");
   const [contract, setContract] = useState(null);
   const [logs, setLogs] = useState([]);
 
@@ -24,9 +25,21 @@ const App = () => {
     [web3]
   );
 
+  // Get contract balance
+  const getDonateBalance = async (web3Instance) => {
+    console.log("call getDonateBalance");
+    if (web3Instance) {
+      console.log("call getDonateBalance2");
+      const balance = await web3Instance.eth.getBalance(
+        "0xCAd10907975a9314B07d9719023B654B2b1612F0"
+      );
+      setDonation(web3Instance.utils.fromWei(balance, "ether"));
+    }
+  };
+
   useEffect(() => {
     if (account) {
-      setLogs((prevLogs) => [...prevLogs, "Call getBalance"]);
+      //setLogs((prevLogs) => [...prevLogs, "Call getBalance"]);
       getBalance(account);
     }
   }, [account, getBalance]);
@@ -46,15 +59,21 @@ const App = () => {
         getBalance(accounts[0]);
         const contractInstance = new web3Instance.eth.Contract(
           CharityContract.abi,
-          "0xCAd10907975a9314B07d9719023B654B2b1612F0"
+          "0xCAd10907975a9314B07d9719023B654B2b1612F0",
+          {
+            gasLimit: "1000000",
+          }
         );
         setContract(contractInstance);
+        getDonateBalance(web3Instance);
 
         // イベント登録
         donateSubscription = contractInstance.events.Donate(
           {},
           (err, event) => {
-            updateLog(web3.utils.fromWei(event.returnValues.value));
+            getBalance(accounts[0]);
+            getDonateBalance(web3Instance);
+            //updateLog(web3Instance.utils.fromWei(event.returnValues.value));
           }
         );
       } else {
@@ -103,6 +122,7 @@ const App = () => {
       <Main
         contract={contract}
         account={account}
+        donation={donation}
         updateLog={updateLog}
         web3={web3}
       />
