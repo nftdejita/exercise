@@ -15,19 +15,15 @@ const App = () => {
   const [logs, setLogs] = useState([]);
 
   // Get account balance
-  const getBalance = useCallback(
-    async (account) => {
-      if (web3) {
-        const balance = await web3.eth.getBalance(account);
-        setBalance(web3.utils.fromWei(balance, "ether"));
-      }
-    },
-    [web3]
-  );
+  const getBalance = async (account) => {
+    if (web3) {
+      const balance = await web3.eth.getBalance(account);
+      setBalance(web3.utils.fromWei(balance, "ether"));
+    }
+  };
 
   // Get contract balance
   const getDonateBalance = async (web3Instance) => {
-    console.log("call getDonateBalance");
     if (web3Instance) {
       console.log("call getDonateBalance2");
       const balance = await web3Instance.eth.getBalance(
@@ -39,7 +35,6 @@ const App = () => {
 
   useEffect(() => {
     if (account) {
-      //setLogs((prevLogs) => [...prevLogs, "Call getBalance"]);
       getBalance(account);
     }
   }, [account, getBalance]);

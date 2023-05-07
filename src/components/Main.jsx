@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const Main = ({ contract, account, updateLog, web3, donation }) => {
-  const [donationAmount, setDonationAmount] = useState("");
+  const [donationAmount, setDonationAmount] = useState("0.2");
 
   const donate = async () => {
     try {
@@ -26,12 +26,8 @@ const Main = ({ contract, account, updateLog, web3, donation }) => {
 
   return (
     <div className="main">
-      <div className="contract-info">
-        <h1>Charity</h1>
-        <p>{contract.options.address}</p>
-        <p>{donation} ETH</p>
-      </div>
-      <div className="form-control">
+      <h2>Charity ({donation} ETH)</h2>
+      <div>
         <input
           type="number"
           value={donationAmount}
@@ -39,9 +35,9 @@ const Main = ({ contract, account, updateLog, web3, donation }) => {
           min="0.1"
           step="0.1"
         />
-        <button onClick={donate}>Donate</button>
-        <button onClick={withdraw}>Withdraw</button>
+        <button onClick={donate}>募金</button>
       </div>
+      <button onClick={withdraw}>引き出し</button>
     </div>
   );
 };
