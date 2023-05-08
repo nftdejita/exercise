@@ -1,5 +1,5 @@
 import "./styles.css";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Web3 from "web3";
 import Header from "./components/Header";
 import Main from "./components/Main";
@@ -39,6 +39,7 @@ const App = () => {
 
   useEffect(() => {
     let donateSubscription;
+    let withdrawSubscription;
 
     // Initialize web3, account and contract
     const init = async () => {
@@ -68,6 +69,13 @@ const App = () => {
             getContractBalance(web3Instance);
           }
         );
+        withdrawSubscription = contractInstance.events.Withdraw(
+          {},
+          (err, event) => {
+            getAccountBalance(accounts[0]);
+            getContractBalance(web3Instance);
+          }
+        );
       } else {
         alert("Please install MetaMask.");
       }
@@ -78,7 +86,7 @@ const App = () => {
     if (ethereum) {
       ethereum.on("accountsChanged", (accounts) => {
         setAccount(accounts[0]);
-        getContractBalance(accounts[0]);
+        getAccountBalance(accounts[0]);
       });
 
       ethereum.on("chainChanged", (chainId) => {
@@ -96,6 +104,9 @@ const App = () => {
       }
       if (donateSubscription) {
         donateSubscription.unsubscribe();
+      }
+      if (withdrawSubscription) {
+        withdrawSubscription.unsubscribe();
       }
     };
   }, []);
