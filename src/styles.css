@@ -84,11 +84,3 @@ button:hover {
   margin-bottom: 10px;
   word-wrap: break-word;
 }
-
-.connect-button {
-  background-color: #f44336;
-}
-
-.connect-button:hover {
-  background-color: #c62828;
-}

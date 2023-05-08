@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Main = ({ contract, account, updateLog, web3, donation }) => {
+const Main = ({ contract, account, updateLog, web3, balance }) => {
   const [donationAmount, setDonationAmount] = useState("0.2");
 
   const donate = async () => {
@@ -26,7 +26,7 @@ const Main = ({ contract, account, updateLog, web3, donation }) => {
 
   return (
     <div className="main">
-      <h2>Charity ({donation} ETH)</h2>
+      <h2>Charity ({balance} ETH)</h2>
       <div>
         <input
           type="number"

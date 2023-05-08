@@ -1,5 +1,5 @@
 import "./styles.css";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import Web3 from "web3";
 import Header from "./components/Header";
 import Main from "./components/Main";
@@ -9,35 +9,33 @@ import CharityContract from "./contracts/Charity.json";
 const App = () => {
   const [web3, setWeb3] = useState(null);
   const [account, setAccount] = useState("");
-  const [balance, setBalance] = useState("");
-  const [donation, setDonation] = useState("");
+  const [accountBalance, setAccountBalance] = useState("");
+  const [contractBalance, setContractBalance] = useState("");
   const [contract, setContract] = useState(null);
   const [logs, setLogs] = useState([]);
+  const CONTRACT_ADDRESS = "0xCAd10907975a9314B07d9719023B654B2b1612F0";
 
   // Get account balance
-  const getBalance = async (account) => {
+  const getAccountBalance = async (account) => {
     if (web3) {
       const balance = await web3.eth.getBalance(account);
-      setBalance(web3.utils.fromWei(balance, "ether"));
+      setAccountBalance(web3.utils.fromWei(balance, "ether"));
     }
   };
 
   // Get contract balance
-  const getDonateBalance = async (web3Instance) => {
+  const getContractBalance = async (web3Instance) => {
     if (web3Instance) {
-      console.log("call getDonateBalance2");
-      const balance = await web3Instance.eth.getBalance(
-        "0xCAd10907975a9314B07d9719023B654B2b1612F0"
-      );
-      setDonation(web3Instance.utils.fromWei(balance, "ether"));
+      const balance = await web3Instance.eth.getBalance(CONTRACT_ADDRESS);
+      setContractBalance(web3Instance.utils.fromWei(balance, "ether"));
     }
   };
 
   useEffect(() => {
     if (account) {
-      getBalance(account);
+      getAccountBalance(account);
     }
-  }, [account, getBalance]);
+  }, [account, getAccountBalance]);
 
   useEffect(() => {
     let donateSubscription;
@@ -51,24 +49,23 @@ const App = () => {
           method: "eth_requestAccounts",
         });
         setAccount(() => accounts[0]);
-        getBalance(accounts[0]);
+        getAccountBalance(accounts[0]);
         const contractInstance = new web3Instance.eth.Contract(
           CharityContract.abi,
-          "0xCAd10907975a9314B07d9719023B654B2b1612F0",
+          CONTRACT_ADDRESS,
           {
             gasLimit: "1000000",
           }
         );
         setContract(contractInstance);
-        getDonateBalance(web3Instance);
+        getContractBalance(web3Instance);
 
         // イベント登録
         donateSubscription = contractInstance.events.Donate(
           {},
           (err, event) => {
-            getBalance(accounts[0]);
-            getDonateBalance(web3Instance);
-            //updateLog(web3Instance.utils.fromWei(event.returnValues.value));
+            getAccountBalance(accounts[0]);
+            getContractBalance(web3Instance);
           }
         );
       } else {
@@ -81,7 +78,7 @@ const App = () => {
     if (ethereum) {
       ethereum.on("accountsChanged", (accounts) => {
         setAccount(accounts[0]);
-        getBalance(accounts[0]);
+        getContractBalance(accounts[0]);
       });
 
       ethereum.on("chainChanged", (chainId) => {
@@ -113,11 +110,11 @@ const App = () => {
 
   return (
     <div className="container">
-      <Header account={account} balance={balance} />
+      <Header account={account} balance={accountBalance} />
       <Main
         contract={contract}
         account={account}
-        donation={donation}
+        balance={contractBalance}
         updateLog={updateLog}
         web3={web3}
       />
