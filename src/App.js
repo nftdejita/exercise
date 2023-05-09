@@ -86,7 +86,6 @@ const App = () => {
     if (ethereum) {
       ethereum.on("accountsChanged", (accounts) => {
         setAccount(accounts[0]);
-        getAccountBalance(accounts[0]);
       });
 
       ethereum.on("chainChanged", (chainId) => {
