@@ -8,29 +8,40 @@ import {
   Typography,
 } from "@mui/material";
 
-const Main = ({ contract, account, updateLog, web3, donation }) => {
+// Mainコンポーネント：寄付と引き出しの機能を提供
+const Main = ({ contract, account, updateLog, web3, balance }) => {
+  // donationAmount：寄付金額を管理するステート
   const [donationAmount, setDonationAmount] = useState("0.2");
 
-  const donate = async () => {
+  // donate関数：寄付を実行する非同期関数
+  async function donate() {
     try {
+      // 寄付金額をetherからweiに変換
       const amount = web3.utils.toWei(donationAmount, "ether");
+      // コントラクトのdonateメソッドを実行
       await contract.methods.donate().send({ from: account, value: amount });
+      // ログに寄付金額を表示
       updateLog(`Donated ${web3.utils.fromWei(amount, "ether")} ether.`);
     } catch (error) {
+      // エラーメッセージをログに表示
       updateLog(`Error: ${error.message}`);
     }
-  };
+  }
 
-  const withdraw = async () => {
+  // withdraw関数：引き出しを実行する非同期関数
+  async function withdraw() {
     try {
+      // コントラクトのwithdrawメソッドを実行
       const result = await contract.methods.withdraw().send({ from: account });
+      // 引き出し金額とトランザクションハッシュをログに表示
       updateLog(
         `Withdrew ${result.events.Withdraw.returnValues.value} Ether: ${result.transactionHash}`
       );
     } catch (error) {
+      // エラーメッセージをログに表示
       updateLog(`Error: ${error.message}`);
     }
-  };
+  }
 
   return (
     <Card>
@@ -43,7 +54,7 @@ const Main = ({ contract, account, updateLog, web3, donation }) => {
         }}
       >
         <Typography variant="h3" color="inherit" noWrap>
-          Charity ({donation} ETH)
+          Charity ({balance} ETH)
         </Typography>
         <Box sx={{ display: "flex", gap: 1 }}>
           <Input
