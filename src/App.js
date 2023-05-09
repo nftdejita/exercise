@@ -32,12 +32,12 @@ const App = () => {
     }
   };
 
-  // アカウントの変更、残高更新時に残高を取得する
+  // アカウントの変更、コントラクト残高更新時にアカウント残高を取得する
   useEffect(() => {
     if (account) {
       getAccountBalance(account);
     }
-  }, [account, getAccountBalance]); // getAccountBalanceが入っているのはEventでの更新時にaccountが更新されないため
+  }, [account, getContractBalance]);
 
   // 画面ロード時の初期化処理
   useEffect(() => {
@@ -53,7 +53,7 @@ const App = () => {
           method: "eth_requestAccounts",
         });
         setAccount(() => accounts[0]);
-        getAccountBalance();
+        getAccountBalance(accounts[0]);
         const contractInstance = new web3Instance.eth.Contract(
           CharityContract.abi,
           CONTRACT_ADDRESS,
@@ -68,14 +68,12 @@ const App = () => {
         donateSubscription = contractInstance.events.Donate(
           {},
           (err, event) => {
-            getAccountBalance(account[0]);
             getContractBalance(web3Instance);
           }
         );
         withdrawSubscription = contractInstance.events.Withdraw(
           {},
           (err, event) => {
-            getAccountBalance(account[0]);
             getContractBalance(web3Instance);
           }
         );
@@ -88,7 +86,7 @@ const App = () => {
     const ethereum = window.ethereum;
     if (ethereum) {
       ethereum.on("accountsChanged", (accounts) => {
-        setAccount(() => accounts[0]);
+        setAccount(accounts[0]);
       });
 
       ethereum.on("chainChanged", (chainId) => {
