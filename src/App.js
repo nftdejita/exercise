@@ -7,6 +7,7 @@ import LogArea from "./components/LogArea";
 import CharityContract from "./contracts/Charity.json";
 
 const App = () => {
+  // ステート変数の定義
   const [web3, setWeb3] = useState(null);
   const [account, setAccount] = useState("");
   const [accountBalance, setAccountBalance] = useState("");
@@ -15,7 +16,7 @@ const App = () => {
   const [logs, setLogs] = useState([]);
   const CONTRACT_ADDRESS = "0xCAd10907975a9314B07d9719023B654B2b1612F0";
 
-  // Get account balance
+  // アカウント残高の取得
   const getAccountBalance = async (account) => {
     if (web3) {
       const balance = await web3.eth.getBalance(account);
@@ -23,7 +24,7 @@ const App = () => {
     }
   };
 
-  // Get contract balance
+  // コントラクト残高の取得
   const getContractBalance = async (web3Instance) => {
     if (web3Instance) {
       const balance = await web3Instance.eth.getBalance(CONTRACT_ADDRESS);
@@ -31,17 +32,19 @@ const App = () => {
     }
   };
 
+  // アカウントの変更、残高更新時に残高を取得する
   useEffect(() => {
     if (account) {
       getAccountBalance(account);
     }
   }, [account, getAccountBalance]);
 
+  // 画面ロード時の初期化処理
   useEffect(() => {
     let donateSubscription;
     let withdrawSubscription;
 
-    // Initialize web3, account and contract
+    // 初期処理
     const init = async () => {
       if (window.ethereum) {
         const web3Instance = new Web3(window.ethereum);
@@ -61,7 +64,7 @@ const App = () => {
         setContract(contractInstance);
         getContractBalance(web3Instance);
 
-        // イベント登録
+        // コントラクトのイベント発生時に呼び出される処理を登録する
         donateSubscription = contractInstance.events.Donate(
           {},
           (err, event) => {
@@ -81,7 +84,7 @@ const App = () => {
       }
     };
 
-    // Listen for account change and network change
+    // アカウント変更とネットワーク変更のリスナーを登録する
     const ethereum = window.ethereum;
     if (ethereum) {
       ethereum.on("accountsChanged", (accounts) => {
@@ -95,7 +98,7 @@ const App = () => {
 
     init();
 
-    // Remove event listeners when component unmounts
+    // コンポーネントがアンマウントされる際にイベントリスナーを削除する
     return () => {
       if (ethereum) {
         ethereum.removeListener("accountsChanged", setAccount);
@@ -110,6 +113,7 @@ const App = () => {
     };
   }, []);
 
+  // ログの更新
   const updateLog = (newLog) => {
     setLogs((prevLogs) => [...prevLogs, newLog]);
   };
@@ -118,6 +122,7 @@ const App = () => {
     return <div>Loading...</div>;
   }
 
+  // web3、アカウント、コントラクトがまだロードされていない場合
   return (
     <div className="container">
       <Header account={account} balance={accountBalance} />

@@ -53,7 +53,7 @@ const Main = ({ contract, account, updateLog, web3, balance }) => {
           gap: 2,
         }}
       >
-        <Typography variant="h3" color="inherit" noWrap>
+        <Typography variant="h4" color="inherit" noWrap>
           Charity ({balance} ETH)
         </Typography>
         <Box sx={{ display: "flex", gap: 1 }}>
