@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import { Box, Card } from "@mui/material";
 
 const LogArea = ({ logs }) => {
   const messagesEndRef = useRef(null);
@@ -12,12 +13,27 @@ const LogArea = ({ logs }) => {
   }, [logs]);
 
   return (
-    <div className="log-area">
+    <Card
+      className="log-area"
+      sx={{
+        overflowY: "auto",
+        maxHeight: "200px",
+        padding: "16px",
+        backgroundColor: "grey.200",
+
+        fontSize: "8pt",
+        marginTop: "10px",
+        backgroundColor: "black",
+        color: "white",
+      }}
+    >
       {logs.map((log, index) => (
-        <div key={index}>{log}</div>
+        <Box key={index} sx={{ marginBottom: "8px" }}>
+          {log}
+        </Box>
       ))}
       <div ref={messagesEndRef} />
-    </div>
+    </Card>
   );
 };
 

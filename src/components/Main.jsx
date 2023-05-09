@@ -1,4 +1,12 @@
 import React, { useState } from "react";
+import {
+  Button,
+  Input,
+  Box,
+  Card,
+  CardContent,
+  Typography,
+} from "@mui/material";
 
 const Main = ({ contract, account, updateLog, web3, donation }) => {
   const [donationAmount, setDonationAmount] = useState("0.2");
@@ -25,20 +33,35 @@ const Main = ({ contract, account, updateLog, web3, donation }) => {
   };
 
   return (
-    <div className="main">
-      <h2>Charity ({donation} ETH)</h2>
-      <div>
-        <input
-          type="number"
-          value={donationAmount}
-          onChange={(e) => setDonationAmount(e.target.value)}
-          min="0.1"
-          step="0.1"
-        />
-        <button onClick={donate}>募金</button>
-      </div>
-      <button onClick={withdraw}>引き出し</button>
-    </div>
+    <Card>
+      <CardContent
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 2,
+        }}
+      >
+        <Typography variant="h3" color="inherit" noWrap>
+          Charity ({donation} ETH)
+        </Typography>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Input
+            type="number"
+            value={donationAmount}
+            onChange={(e) => setDonationAmount(e.target.value)}
+            min="0.1"
+            step="0.1"
+          />
+          <Button variant="contained" onClick={donate}>
+            募金
+          </Button>
+        </Box>
+        <Button variant="contained" onClick={withdraw}>
+          引き出し
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 
