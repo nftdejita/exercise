@@ -1,4 +1,12 @@
 import React, { useState } from "react";
+import {
+  Button,
+  Input,
+  Box,
+  Card,
+  CardContent,
+  Typography,
+} from "@mui/material";
 
 // Mainコンポーネント：寄付と引き出しの機能を提供
 const Main = ({ contract, account, updateLog, web3, balance }) => {
@@ -36,24 +44,35 @@ const Main = ({ contract, account, updateLog, web3, balance }) => {
   }
 
   return (
-    <div className="main">
-      {/* 現在のコントラクトの残高を表示 */}
-      <h2>Charity ({balance} ETH)</h2>
-      <div>
-        {/* 寄付金額を入力するフォーム */}
-        <input
-          type="number"
-          value={donationAmount}
-          onChange={(e) => setDonationAmount(e.target.value)}
-          min="0.1"
-          step="0.1"
-        />
-        {/* 寄付ボタン */}
-        <button onClick={donate}>募金</button>
-      </div>
-      {/* 引き出しボタン */}
-      <button onClick={withdraw}>引き出し</button>
-    </div>
+    <Card>
+      <CardContent
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 2,
+        }}
+      >
+        <Typography variant="h3" color="inherit" noWrap>
+          Charity ({balance} ETH)
+        </Typography>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Input
+            type="number"
+            value={donationAmount}
+            onChange={(e) => setDonationAmount(e.target.value)}
+            min="0.1"
+            step="0.1"
+          />
+          <Button variant="contained" onClick={donate}>
+            募金
+          </Button>
+        </Box>
+        <Button variant="contained" onClick={withdraw}>
+          引き出し
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 
