@@ -32,6 +32,19 @@ const App = () => {
     }
   };
 
+  // イベント名を取得する関数
+  const getEventNames = (abi) => {
+    const eventNames = [];
+
+    for (const item of abi) {
+      if (item.type === "event") {
+        eventNames.push(item.name);
+      }
+    }
+
+    return eventNames;
+  };
+
   // アカウントの変更、コントラクト残高更新時にアカウント残高を取得する
   useEffect(() => {
     if (account) {
@@ -41,8 +54,7 @@ const App = () => {
 
   // 画面ロード時の初期化処理
   useEffect(() => {
-    let donateSubscription;
-    let withdrawSubscription;
+    let subscriptions = [];
 
     // 初期処理
     const init = async () => {
@@ -64,19 +76,25 @@ const App = () => {
         setContract(contractInstance);
         getContractBalance(web3Instance);
 
-        // コントラクトのイベント発生時に呼び出される処理を登録する
-        donateSubscription = contractInstance.events.Donate(
-          {},
-          (err, event) => {
-            getContractBalance(web3Instance);
-          }
-        );
-        withdrawSubscription = contractInstance.events.Withdraw(
-          {},
-          (err, event) => {
-            getContractBalance(web3Instance);
-          }
-        );
+        const eventNames = getEventNames(CharityContract.abi);
+        eventNames.forEach((eventName) => {
+          const subscription = contractInstance.events[eventName](
+            {},
+            (err, event) => {
+              if (err) {
+                console.error(`Error in ${eventName} event: `, err);
+              } else {
+                const args = event.returnValues;
+                const logMessage = `${eventName} event: ${JSON.stringify(
+                  args
+                )}`;
+                updateLog(logMessage);
+                getContractBalance(web3Instance);
+              }
+            }
+          );
+          subscriptions.push(subscription);
+        });
       } else {
         alert("Please install MetaMask.");
       }
@@ -102,12 +120,9 @@ const App = () => {
         ethereum.removeListener("accountsChanged", setAccount);
         ethereum.removeListener("chainChanged", () => window.location.reload());
       }
-      if (donateSubscription) {
-        donateSubscription.unsubscribe();
-      }
-      if (withdrawSubscription) {
-        withdrawSubscription.unsubscribe();
-      }
+      subscriptions.forEach((subscription) => {
+        subscription.unsubscribe();
+      });
     };
   }, []);
 
