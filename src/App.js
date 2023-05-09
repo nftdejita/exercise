@@ -37,7 +37,7 @@ const App = () => {
     if (account) {
       getAccountBalance(account);
     }
-  }, [account, getAccountBalance]);
+  }, [account, getAccountBalance]); // getAccountBalanceが入っているのはEventでの更新時にaccountが更新されないため
 
   // 画面ロード時の初期化処理
   useEffect(() => {
@@ -53,7 +53,7 @@ const App = () => {
           method: "eth_requestAccounts",
         });
         setAccount(() => accounts[0]);
-        getAccountBalance(accounts[0]);
+        getAccountBalance();
         const contractInstance = new web3Instance.eth.Contract(
           CharityContract.abi,
           CONTRACT_ADDRESS,
@@ -68,14 +68,14 @@ const App = () => {
         donateSubscription = contractInstance.events.Donate(
           {},
           (err, event) => {
-            getAccountBalance(accounts[0]);
+            getAccountBalance(account[0]);
             getContractBalance(web3Instance);
           }
         );
         withdrawSubscription = contractInstance.events.Withdraw(
           {},
           (err, event) => {
-            getAccountBalance(accounts[0]);
+            getAccountBalance(account[0]);
             getContractBalance(web3Instance);
           }
         );
@@ -88,7 +88,7 @@ const App = () => {
     const ethereum = window.ethereum;
     if (ethereum) {
       ethereum.on("accountsChanged", (accounts) => {
-        setAccount(accounts[0]);
+        setAccount(() => accounts[0]);
       });
 
       ethereum.on("chainChanged", (chainId) => {
