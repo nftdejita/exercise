@@ -32,7 +32,7 @@ const App = () => {
     }
   };
 
-  // アカウントの変更、残高更新時に残高を取得する
+  // アカウントの変更、コントラクト残高更新時にアカウント残高を取得する
   useEffect(() => {
     if (account) {
       getAccountBalance(account);
@@ -68,14 +68,12 @@ const App = () => {
         donateSubscription = contractInstance.events.Donate(
           {},
           (err, event) => {
-            getAccountBalance(accounts[0]);
             getContractBalance(web3Instance);
           }
         );
         withdrawSubscription = contractInstance.events.Withdraw(
           {},
           (err, event) => {
-            getAccountBalance(accounts[0]);
             getContractBalance(web3Instance);
           }
         );
