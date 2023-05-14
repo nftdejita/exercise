@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import Main from "./components/Main";
 import LogArea from "./components/LogArea";
 import CharityContract from "./contracts/Charity.json";
+import BlockchainExplorer from "./contracts/Explorer";
 
 const App = () => {
   // ステート変数の定義
@@ -147,6 +148,7 @@ const App = () => {
         web3={web3}
       />
       <LogArea logs={logs} />
+      <BlockchainExplorer />
     </div>
   );
 };
