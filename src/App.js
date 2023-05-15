@@ -1,10 +1,11 @@
 import "./styles.css";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import Web3 from "web3";
 import Header from "./components/Header";
 import Main from "./components/Main";
 import LogArea from "./components/LogArea";
 import CharityContract from "./contracts/Charity.json";
+import BlockchainExplorer from "./components/BlockchainExplorer";
 
 const App = () => {
   // ステート変数の定義
@@ -70,12 +71,15 @@ const App = () => {
           CharityContract.abi,
           CONTRACT_ADDRESS,
           {
-            gasLimit: "1000000",
+            gasLimit: "10000000",
           }
         );
         setContract(contractInstance);
         getContractBalance(web3Instance);
 
+        subscriptions.forEach((subscription) => {
+          subscription.unsubscribe();
+        });
         const eventNames = getEventNames(CharityContract.abi);
         eventNames.forEach((eventName) => {
           const subscription = contractInstance.events[eventName](
@@ -147,6 +151,7 @@ const App = () => {
         web3={web3}
       />
       <LogArea logs={logs} />
+      <BlockchainExplorer />
     </div>
   );
 };
