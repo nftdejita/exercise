@@ -5,7 +5,7 @@ import Header from "./components/Header";
 import Main from "./components/Main";
 import LogArea from "./components/LogArea";
 import CharityContract from "./contracts/Charity.json";
-import BlockchainExplorer from "./contracts/Explorer";
+import BlockchainExplorer from "./components/BlockchainExplorer";
 
 const App = () => {
   // ステート変数の定義
