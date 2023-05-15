@@ -18,39 +18,45 @@ function BlockchainExplorer() {
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
-    const web3Instance = new Web3("https://ganache.nst-tsutsuji.com"); // GanacheのURLとポート
-    setWeb3(() => web3Instance);
+    const init = async () => {
+      const web3Instance = new Web3("https://ganache.nst-tsutsuji.com"); // GanacheのURLとポート
+      setWeb3(() => web3Instance);
 
-    const intervalId = setInterval(async () => {
-      const latestBlockNumber = await web3.eth.getBlockNumber();
-      setLatestBlock(await web3.eth.getBlock(latestBlockNumber));
+      const intervalId = setInterval(async () => {
+        const latestBlockNumber = await web3Instance.eth.getBlockNumber();
+        setLatestBlock(await web3Instance.eth.getBlock(latestBlockNumber));
 
-      let transactions = [];
-      for (let i = 3; i > 0; i--) {
-        const blockNumber = latestBlockNumber - i;
-        if (blockNumber < 0) {
-          // blockNumberが0以下になった場合はループを抜ける
-          break;
+        let transactions = [];
+        for (let i = 2; i > -1; i--) {
+          const blockNumber = latestBlockNumber - i;
+          if (blockNumber < 0) {
+            // blockNumberが0以下になった場合はループを抜ける
+            break;
+          }
+          const block = await web3Instance.eth.getBlock(blockNumber);
+
+          const txs = await Promise.all(
+            block.transactions.map((txHash) =>
+              web3Instance.eth.getTransaction(txHash)
+            )
+          );
+          const analyzedTxs = txs.map((tx) => {
+            const isContractCall = tx.input && tx.input !== "0x";
+            return {
+              ...tx,
+              timestamp: block.timestamp,
+              isContractCall,
+            };
+          });
+          transactions = [...transactions, ...analyzedTxs];
         }
-        const block = await web3.eth.getBlock(blockNumber);
+        setTransactions(transactions);
+      }, 5000); // 5秒ごとに最新のブロックを取得
 
-        const txs = await Promise.all(
-          block.transactions.map((txHash) => web3.eth.getTransaction(txHash))
-        );
-        const analyzedTxs = txs.map((tx) => {
-          const isContractCall = tx.input && tx.input !== "0x";
-          return {
-            ...tx,
-            timestamp: block.timestamp,
-            isContractCall,
-          };
-        });
-        transactions = [...transactions, ...analyzedTxs];
-      }
-      setTransactions(transactions);
-    }, 5000); // 5秒ごとに最新のブロックを取得
+      return () => clearInterval(intervalId);
+    };
 
-    return () => clearInterval(intervalId);
+    init();
   }, []);
 
   return (
