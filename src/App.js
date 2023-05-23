@@ -20,6 +20,11 @@ const App = () => {
   const [account, setAccount] = useState("");
   const [logs, setLogs] = useState([]);
 
+  const viewCharity = true;
+  const viewOnePonzi = true;
+  const viewSomePonzi = false;
+  const viewLottery = false;
+  const viewRoulette = false;
   const [charityContract, setCharityContract] = useState(null);
   const [onePonziContract, setOnePonziContract] = useState(null);
   const [somePonziContract, setSomePonziContract] = useState(null);
@@ -112,36 +117,46 @@ const App = () => {
 
   return (
     <div className="container">
-      <CharityMain
-        contract={charityContract}
-        account={account}
-        updateLog={updateLog}
-        web3={web3}
-      />
-      <OnePonziMain
-        contract={onePonziContract}
-        account={account}
-        updateLog={updateLog}
-        web3={web3}
-      />
-      <SomePonziMain
-        contract={somePonziContract}
-        account={account}
-        updateLog={updateLog}
-        web3={web3}
-      />
-      <LotteryMain
-        contract={lotteryContract}
-        account={account}
-        updateLog={updateLog}
-        web3={web3}
-      />
-      <RouletteMain
-        contract={rouletteContract}
-        account={account}
-        updateLog={updateLog}
-        web3={web3}
-      />
+      {viewCharity && (
+        <CharityMain
+          contract={charityContract}
+          account={account}
+          updateLog={updateLog}
+          web3={web3}
+        />
+      )}
+      {viewOnePonzi && (
+        <OnePonziMain
+          contract={onePonziContract}
+          account={account}
+          updateLog={updateLog}
+          web3={web3}
+        />
+      )}
+      {viewSomePonzi && (
+        <SomePonziMain
+          contract={somePonziContract}
+          account={account}
+          updateLog={updateLog}
+          web3={web3}
+        />
+      )}
+      {viewLottery && (
+        <LotteryMain
+          contract={lotteryContract}
+          account={account}
+          updateLog={updateLog}
+          web3={web3}
+        />
+      )}
+      {viewRoulette && (
+        <RouletteMain
+          contract={rouletteContract}
+          account={account}
+          updateLog={updateLog}
+          web3={web3}
+        />
+      )}
       <LogArea logs={logs} />
       <BlockchainExplorer />
     </div>
