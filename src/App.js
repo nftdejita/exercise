@@ -21,7 +21,7 @@ const App = () => {
   const [logs, setLogs] = useState([]);
 
   const viewCharity = true;
-  const viewOnePonzi = true;
+  const viewOnePonzi = false;
   const viewSomePonzi = false;
   const viewLottery = false;
   const viewRoulette = false;
@@ -33,7 +33,7 @@ const App = () => {
   const CONTRACT_CHARITY = "0x08f19109325296e80e9f6E83D6Eeae136A9789D3";
   const CONTRACT_ONE_PONZI = "0x5a8f576E2dC361197414dfc7E576B89E27E26Be2";
   const CONTRACT_SOME_PONZI = "0xC3d60c4Cc07571B5B17ac1D4AE1228b40152C051";
-  const CONTRACT_LOTTERY = "0x7ab31838DbCBCb4470A70d03924F32AE9B1e6392";
+  const CONTRACT_LOTTERY = "0xfc8bF2663a4cD165558B76EA141A34af9182595b";
   const CONTRACT_ROULETTE = "0x2B2508c0DE913c1debF17CB9aa4D6d8286ea846E";
 
   // 画面ロード時の初期化処理

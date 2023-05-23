@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   Button,
-  Input,
+  TextField,
   Box,
   Card,
   CardContent,
@@ -57,12 +57,10 @@ const CharityMain = ({ contract, account, updateLog, web3 }) => {
           Charity
         </Typography>
         <Box sx={{ display: "flex", gap: 1 }}>
-          <Input
-            type="number"
+          <TextField
+            label="donate"
             value={donationAmount}
             onChange={(e) => setDonationAmount(e.target.value)}
-            min="0.1"
-            step="0.1"
           />
           <Button variant="contained" onClick={donate}>
             募金

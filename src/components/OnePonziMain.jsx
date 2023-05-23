@@ -9,13 +9,13 @@ import {
 } from "@mui/material";
 
 const OnePonziMain = ({ contract, account, updateLog, web3 }) => {
-  const [donationAmount, setDonationAmount] = useState("0.1");
+  const [investAmount, setInvestAmount] = useState("0.1");
 
   async function invest() {
     try {
-      const amount = web3.utils.toWei(donationAmount, "ether");
-      await contract.methods.donate().send({ from: account, value: amount });
-      updateLog(`Donated ${web3.utils.fromWei(amount, "ether")} ether.`);
+      const amount = web3.utils.toWei(investAmount, "ether");
+      await contract.methods.invest().send({ from: account, value: amount });
+      updateLog(`Invest ${web3.utils.fromWei(amount, "ether")} ether.`);
     } catch (error) {
       updateLog(`Error: ${error.message}`);
     }
@@ -37,8 +37,8 @@ const OnePonziMain = ({ contract, account, updateLog, web3 }) => {
         <Box sx={{ display: "flex", gap: 1 }}>
           <Input
             type="number"
-            value={donationAmount}
-            onChange={(e) => setDonationAmount(e.target.value)}
+            value={investAmount}
+            onChange={(e) => setInvestAmount(e.target.value)}
             min="0.1"
             step="0.1"
           />

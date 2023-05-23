@@ -2,43 +2,64 @@ import React, { useState } from "react";
 import {
   Button,
   Input,
+  TextField,
   Box,
   Card,
   CardContent,
   Typography,
 } from "@mui/material";
 
-// Mainコンポーネント：寄付と引き出しの機能を提供
 const RouletteMain = ({ contract, account, updateLog, web3 }) => {
-  // donationAmount：寄付金額を管理するステート
-  const [donationAmount, setDonationAmount] = useState("0.1");
+  const [investAmount, setInvestAmount] = useState("0.1");
+  const [betAmount, setBetAmount] = useState("0.1");
+  const [betType, setBetType] = useState("1");
+  const [betChoice, setBetChoice] = useState("1");
 
-  // donate関数：寄付を実行する非同期関数
-  async function donate() {
+  async function start() {
     try {
-      // 寄付金額をetherからweiに変換
-      const amount = web3.utils.toWei(donationAmount, "ether");
-      // コントラクトのdonateメソッドを実行
-      await contract.methods.donate().send({ from: account, value: amount });
-      // ログに寄付金額を表示
-      updateLog(`Donated ${web3.utils.fromWei(amount, "ether")} ether.`);
+      await contract.methods.startRoulette().send({ from: account });
+      updateLog(`Start Roulette.`);
     } catch (error) {
-      // エラーメッセージをログに表示
       updateLog(`Error: ${error.message}`);
     }
   }
 
-  // withdraw関数：引き出しを実行する非同期関数
-  async function withdraw() {
+  async function stop() {
     try {
-      // コントラクトのwithdrawメソッドを実行
-      const result = await contract.methods.withdraw().send({ from: account });
-      // 引き出し金額とトランザクションハッシュをログに表示
-      updateLog(
-        `Withdrew ${result.events.Withdraw.returnValues.value} Ether: ${result.transactionHash}`
-      );
+      await contract.methods.stopRoulette().send({ from: account });
+      updateLog(`Stop Roulette.`);
     } catch (error) {
-      // エラーメッセージをログに表示
+      updateLog(`Error: ${error.message}`);
+    }
+  }
+  async function invest() {
+    try {
+      const amount = web3.utils.toWei(investAmount, "ether");
+      await contract.methods.fund().send({ from: account, value: amount });
+      updateLog(`Invest ${web3.utils.fromWei(amount, "ether")} ether.`);
+    } catch (error) {
+      updateLog(`Error: ${error.message}`);
+    }
+  }
+
+  async function withdrow() {
+    try {
+      const result = await contract.methods.withdrow().send({ from: account });
+      updateLog(`withdrow ${result.transactionHash}`);
+    } catch (error) {
+      updateLog(`Error: ${error.message}`);
+    }
+  }
+
+  async function wager() {
+    try {
+      const amount = web3.utils.toWei(betAmount, "ether");
+      await contract.methods.wager(betType, betChoice).send({
+        from: account,
+        value: amount,
+      });
+      updateLog(`wager  ${result.transactionHash}`);
+    } catch (error) {
       updateLog(`Error: ${error.message}`);
     }
   }
@@ -59,18 +80,52 @@ const RouletteMain = ({ contract, account, updateLog, web3 }) => {
         <Box sx={{ display: "flex", gap: 1 }}>
           <Input
             type="number"
-            value={donationAmount}
-            onChange={(e) => setDonationAmount(e.target.value)}
+            placeholder="投資金額"
+            value={investAmount}
+            onChange={(e) => setInvestAmount(e.target.value)}
             min="0.1"
             step="0.1"
           />
-          <Button variant="contained" onClick={donate}>
-            募金
+          <Button variant="contained" onClick={invest}>
+            投資
+          </Button>
+          <Button variant="contained" onClick={withdrow}>
+            回収
+          </Button>
+          <Button variant="contained" onClick={start}>
+            開始
+          </Button>
+          <Button variant="contained" onClick={stop}>
+            終了
           </Button>
         </Box>
-        <Button variant="contained" onClick={withdraw}>
-          引き出し
-        </Button>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <TextField
+            label="type"
+            value={betType}
+            inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+            onChange={(e) => setBetType(e.target.value)}
+          />
+          <TextField
+            label="choice"
+            value={betChoice}
+            inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+            onChange={(e) => setBetChoice(e.target.value)}
+          />
+          <Input
+            type="number"
+            value={betAmount}
+            onChange={(e) => setBetAmount(e.target.value)}
+            placeholder="1.0"
+            step="0.01"
+            min="0"
+            max="10"
+          />
+
+          <Button variant="contained" onClick={wager}>
+            賭ける
+          </Button>
+        </Box>
       </CardContent>
     </Card>
   );
