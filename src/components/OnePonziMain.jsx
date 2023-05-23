@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const OnePonziMain = ({ contract, account, updateLog, web3 }) => {
+const OnePonziMain = () => {
   return (
     <Card sx={{ margin: "6px" }}>
       <CardContent
