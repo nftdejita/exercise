@@ -8,10 +8,8 @@ import {
   Typography,
 } from "@mui/material";
 
-// Mainコンポーネント：寄付と引き出しの機能を提供
-const Main = ({ contract, account, updateLog, web3, balance }) => {
-  // donationAmount：寄付金額を管理するステート
-  const [donationAmount, setDonationAmount] = useState("0.2");
+const SomePonziMain = ({ contract, account, updateLog, web3 }) => {
+  const [donationAmount, setDonationAmount] = useState("0.1");
 
   // donate関数：寄付を実行する非同期関数
   async function donate() {
@@ -44,7 +42,7 @@ const Main = ({ contract, account, updateLog, web3, balance }) => {
   }
 
   return (
-    <Card>
+    <Card sx={{ margin: "6px" }}>
       <CardContent
         sx={{
           display: "flex",
@@ -54,7 +52,7 @@ const Main = ({ contract, account, updateLog, web3, balance }) => {
         }}
       >
         <Typography variant="h4" color="inherit" noWrap>
-          Charity ({balance} ETH)
+          SomePonzi
         </Typography>
         <Box sx={{ display: "flex", gap: 1 }}>
           <Input
@@ -76,4 +74,4 @@ const Main = ({ contract, account, updateLog, web3, balance }) => {
   );
 };
 
-export default Main;
+export default SomePonziMain;

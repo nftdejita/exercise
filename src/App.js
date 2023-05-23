@@ -1,62 +1,38 @@
 import "./styles.css";
 import React, { useState, useEffect } from "react";
 import Web3 from "web3";
-import Header from "./components/Header";
-import Main from "./components/Main";
+import CharityMain from "./components/CharityMain";
+import OnePonziMain from "./components/OnePonziMain";
+import SomePonziMain from "./components/SomePonziMain";
+import LotteryMain from "./components/LotteryMain";
+import RouletteMain from "./components/RouletteMain";
 import LogArea from "./components/LogArea";
 import CharityContract from "./contracts/Charity.json";
+import OnePonziContract from "./contracts/OnePonzi.json";
+import SomePonziContract from "./contracts/SomePonzi.json";
+import LotteryContract from "./contracts/Lottery.json";
+import RouletteContract from "./contracts/Roulette.json";
 import BlockchainExplorer from "./components/BlockchainExplorer";
 
 const App = () => {
   // ステート変数の定義
   const [web3, setWeb3] = useState(null);
   const [account, setAccount] = useState("");
-  const [accountBalance, setAccountBalance] = useState("");
-  const [contractBalance, setContractBalance] = useState("");
-  const [contract, setContract] = useState(null);
   const [logs, setLogs] = useState([]);
-  const CONTRACT_ADDRESS = "0xCAd10907975a9314B07d9719023B654B2b1612F0";
 
-  // アカウント残高の取得
-  const getAccountBalance = async (account) => {
-    if (web3) {
-      const balance = await web3.eth.getBalance(account);
-      setAccountBalance(web3.utils.fromWei(balance, "ether"));
-    }
-  };
-
-  // コントラクト残高の取得
-  const getContractBalance = async (web3Instance) => {
-    if (web3Instance) {
-      const balance = await web3Instance.eth.getBalance(CONTRACT_ADDRESS);
-      setContractBalance(web3Instance.utils.fromWei(balance, "ether"));
-    }
-  };
-
-  // イベント名を取得する関数
-  const getEventNames = (abi) => {
-    const eventNames = [];
-
-    for (const item of abi) {
-      if (item.type === "event") {
-        eventNames.push(item.name);
-      }
-    }
-
-    return eventNames;
-  };
-
-  // アカウントの変更、コントラクト残高更新時にアカウント残高を取得する
-  useEffect(() => {
-    if (account) {
-      getAccountBalance(account);
-    }
-  }, [account, getContractBalance]);
+  const [charityContract, setCharityContract] = useState(null);
+  const [onePonziContract, setOnePonziContract] = useState(null);
+  const [somePonziContract, setSomePonziContract] = useState(null);
+  const [lotteryContract, setLotteryContract] = useState(null);
+  const [rouletteContract, setRouletteContract] = useState(null);
+  const CONTRACT_CHARITY = "0x08f19109325296e80e9f6E83D6Eeae136A9789D3";
+  const CONTRACT_ONE_PONZI = "0x5a8f576E2dC361197414dfc7E576B89E27E26Be2";
+  const CONTRACT_SOME_PONZI = "0xC3d60c4Cc07571B5B17ac1D4AE1228b40152C051";
+  const CONTRACT_LOTTERY = "0x7ab31838DbCBCb4470A70d03924F32AE9B1e6392";
+  const CONTRACT_ROULETTE = "0x2B2508c0DE913c1debF17CB9aa4D6d8286ea846E";
 
   // 画面ロード時の初期化処理
   useEffect(() => {
-    let subscriptions = [];
-
     // 初期処理
     const init = async () => {
       if (window.ethereum) {
@@ -66,39 +42,36 @@ const App = () => {
           method: "eth_requestAccounts",
         });
         setAccount(() => accounts[0]);
-        getAccountBalance(accounts[0]);
-        const contractInstance = new web3Instance.eth.Contract(
+        // コントラクトの設定
+        const charityInstance = new web3Instance.eth.Contract(
           CharityContract.abi,
-          CONTRACT_ADDRESS,
-          {
-            gasLimit: "10000000",
-          }
+          CONTRACT_CHARITY
         );
-        setContract(contractInstance);
-        getContractBalance(web3Instance);
+        setCharityContract(charityInstance);
 
-        subscriptions.forEach((subscription) => {
-          subscription.unsubscribe();
-        });
-        const eventNames = getEventNames(CharityContract.abi);
-        eventNames.forEach((eventName) => {
-          const subscription = contractInstance.events[eventName](
-            {},
-            (err, event) => {
-              if (err) {
-                console.error(`Error in ${eventName} event: `, err);
-              } else {
-                const args = event.returnValues;
-                const logMessage = `${eventName} event: ${JSON.stringify(
-                  args
-                )}`;
-                updateLog(logMessage);
-                getContractBalance(web3Instance);
-              }
-            }
-          );
-          subscriptions.push(subscription);
-        });
+        const onePonziInstance = new web3Instance.eth.Contract(
+          OnePonziContract.abi,
+          CONTRACT_ONE_PONZI
+        );
+        setOnePonziContract(onePonziInstance);
+
+        const somePonziInstance = new web3Instance.eth.Contract(
+          SomePonziContract.abi,
+          CONTRACT_SOME_PONZI
+        );
+        setSomePonziContract(somePonziInstance);
+
+        const lotteryInstance = new web3Instance.eth.Contract(
+          LotteryContract.abi,
+          CONTRACT_LOTTERY
+        );
+        setLotteryContract(lotteryInstance);
+
+        const rouletteInstance = new web3Instance.eth.Contract(
+          RouletteContract.abi,
+          CONTRACT_ROULETTE
+        );
+        setRouletteContract(rouletteInstance);
       } else {
         alert("Please install MetaMask.");
       }
@@ -111,7 +84,7 @@ const App = () => {
         setAccount(accounts[0]);
       });
 
-      ethereum.on("chainChanged", (chainId) => {
+      ethereum.on("chainChanged", () => {
         window.location.reload();
       });
     }
@@ -124,9 +97,6 @@ const App = () => {
         ethereum.removeListener("accountsChanged", setAccount);
         ethereum.removeListener("chainChanged", () => window.location.reload());
       }
-      subscriptions.forEach((subscription) => {
-        subscription.unsubscribe();
-      });
     };
   }, []);
 
@@ -135,18 +105,40 @@ const App = () => {
     setLogs((prevLogs) => [...prevLogs, newLog]);
   };
 
-  if (!web3 || !account || !contract) {
+  if (!web3 || !account) {
+    // web3、アカウント、がまだロードされていない場合
     return <div>Loading...</div>;
   }
 
-  // web3、アカウント、コントラクトがまだロードされていない場合
   return (
     <div className="container">
-      <Header account={account} balance={accountBalance} />
-      <Main
-        contract={contract}
+      <CharityMain
+        contract={charityContract}
         account={account}
-        balance={contractBalance}
+        updateLog={updateLog}
+        web3={web3}
+      />
+      <OnePonziMain
+        contract={onePonziContract}
+        account={account}
+        updateLog={updateLog}
+        web3={web3}
+      />
+      <SomePonziMain
+        contract={somePonziContract}
+        account={account}
+        updateLog={updateLog}
+        web3={web3}
+      />
+      <LotteryMain
+        contract={lotteryContract}
+        account={account}
+        updateLog={updateLog}
+        web3={web3}
+      />
+      <RouletteMain
+        contract={rouletteContract}
+        account={account}
         updateLog={updateLog}
         web3={web3}
       />
